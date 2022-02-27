@@ -16,7 +16,7 @@ const onlineUsers = require("../onlineUsers");
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || "3001");
+const port = normalizePort(process.env.PORT || "3005");
 app.set("port", port);
 
 /**
@@ -41,10 +41,12 @@ io.on("connection", (socket) => {
   });
 
   socket.on("new-message", (data) => {
+    console.log("data b4",data);
     socket.broadcast.emit("new-message", {
       message: data.message,
       sender: data.sender,
     });
+    console.log("data after",data);
   });
 
   socket.on("logout", (id) => {

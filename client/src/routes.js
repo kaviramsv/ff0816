@@ -62,6 +62,7 @@ const Routes = (props) => {
         setUser(data);
         if (data.id) {
           socket.emit('go-online', data.id);
+          console.log("here")
         }
       } catch (error) {
         console.error(error);
