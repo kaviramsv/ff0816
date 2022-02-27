@@ -21,7 +21,7 @@ const Home = ({ user, logout }) => {
 
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
-
+  
   const classes = useStyles();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -51,10 +51,12 @@ const Home = ({ user, logout }) => {
 
   const saveMessage = async (body) => {
     const { data } = await axios.post('/api/messages', body);
+    console.log("save mesaages:posted msg",data)
     return data;
   };
 
   const sendMessage = (data, body) => {
+    console.log("sending msg",data,body)
     socket.emit('new-message', {
       message: data.message,
       recipientId: body.recipientId,
@@ -62,9 +64,9 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage = (body) => {
+  const postMessage =async (body) => {
     try {
-      const data = saveMessage(body);
+      const data =await saveMessage(body);//working
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
@@ -95,6 +97,8 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
+      console.log("here");
+      console.log("data in addmsg to conv :",data)
       const { message, sender = null } = data;
       if (sender !== null) {
         const newConvo = {
@@ -105,14 +109,38 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
+      console.log("b4",conversations);
+      console.log(conversations.length);
+      
 
-      conversations.forEach((convo) => {
+      let conversation_copy = conversations.map((convo) => {
+        console.log(convo);
         if (convo.id === message.conversationId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-        }
+          convo.messages= [message, ...convo.messages];
+          convo.latestMessageText=message.text;  
+        } 
+      return convo;
       });
-      setConversations(conversations);
+      console.log("cc",conversation_copy);
+      setConversations(conversation_copy);
+      // conversations.forEach((convo) => {      
+      //   if (convo.id === message.conversationId) {
+      //    console.log(convo);
+        
+          // const newMsg={
+          //     ...convo,
+          //     messages:[message, ...convo.messages],
+          //     latestMessageText : message.text,              
+          //   }
+        //   console.log("newmsg",newMsg);
+        //   setConversations((prev) => [newMsg,...prev]) ; 
+        //   console.log("af",conversations);
+        //  console.log(conversations.length);
+        //}
+
+
+      // });
+      // setConversations(conversations);
     },
     [setConversations, conversations]
   );
@@ -120,7 +148,7 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     setActiveConversation(username);
   };
-
+ 
   const addOnlineUser = useCallback((id) => {
     setConversations((prev) =>
       prev.map((convo) => {
