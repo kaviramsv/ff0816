@@ -128,7 +128,7 @@ const Home = ({ user, logout }) => {
       let conversation_copy = conversations.map((convo) => {
         console.log(convo);
         if (convo.id === message.conversationId) {
-          convo.messages= [message, ...convo.messages];
+          convo.messages= [...convo.messages, message];
           convo.latestMessageText=message.text;  
         } 
       return convo;
@@ -205,6 +205,7 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
+        console.log("incoming conversations",data);
         setConversations(data);
       } catch (error) {
         console.error(error);
