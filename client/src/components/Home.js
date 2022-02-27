@@ -67,10 +67,12 @@ const Home = ({ user, logout }) => {
   const postMessage =async (body) => {
     try {
       const data =await saveMessage(body);//working
-
+      console.log("body",body,body.conversationId)
       if (!body.conversationId) {
+        console.log("step2 in addnewconvo");
         addNewConvo(body.recipientId, data.message);
       } else {
+        console.log("add msg convo");
         addMessageToConversation(data);
       }
 
@@ -101,6 +103,7 @@ const Home = ({ user, logout }) => {
       console.log("data in addmsg to conv :",data)
       const { message, sender = null } = data;
       if (sender !== null) {
+        console.log("in new conversation:msg,sender are:",message,sender)
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
@@ -109,10 +112,7 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
-      console.log("b4",conversations);
-      console.log(conversations.length);
       
-
       let conversation_copy = conversations.map((convo) => {
         console.log(convo);
         if (convo.id === message.conversationId) {
@@ -120,27 +120,9 @@ const Home = ({ user, logout }) => {
           convo.latestMessageText=message.text;  
         } 
       return convo;
-      });
-      console.log("cc",conversation_copy);
+      });      
       setConversations(conversation_copy);
-      // conversations.forEach((convo) => {      
-      //   if (convo.id === message.conversationId) {
-      //    console.log(convo);
-        
-          // const newMsg={
-          //     ...convo,
-          //     messages:[message, ...convo.messages],
-          //     latestMessageText : message.text,              
-          //   }
-        //   console.log("newmsg",newMsg);
-        //   setConversations((prev) => [newMsg,...prev]) ; 
-        //   console.log("af",conversations);
-        //  console.log(conversations.length);
-        //}
-
-
-      // });
-      // setConversations(conversations);
+     
     },
     [setConversations, conversations]
   );
