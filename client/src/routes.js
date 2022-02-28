@@ -61,8 +61,7 @@ const Routes = (props) => {
         const { data } = await axios.get('/auth/user');
         setUser(data);
         if (data.id) {
-          socket.emit('go-online', data.id);
-          console.log("here")
+          socket.emit('go-online', data.id);        
         }
       } catch (error) {
         console.error(error);

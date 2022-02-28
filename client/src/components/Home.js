@@ -21,7 +21,7 @@ const Home = ({ user, logout }) => {
 
   const [conversations, setConversations] = useState([]);
   const [activeConversation, setActiveConversation] = useState(null);
-  
+
   const classes = useStyles();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -51,12 +51,10 @@ const Home = ({ user, logout }) => {
 
   const saveMessage = async (body) => {
     const { data } = await axios.post('/api/messages', body);
-    console.log("save mesaages:posted msg",data)
     return data;
   };
 
   const sendMessage = (data, body) => {
-    console.log("sending msg",data,body)
     socket.emit('new-message', {
       message: data.message,
       recipientId: body.recipientId,
@@ -64,18 +62,14 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage =async (body) => {
+  const postMessage = async (body) => {
     try {
-      const data =await saveMessage(body);//working
-      console.log("body",body,body.conversationId)
+      const data = await saveMessage(body);    
       if (!body.conversationId) {
-        console.log("step2 in addnewconvo");
         addNewConvo(body.recipientId, data.message);
       } else {
-        console.log("add msg convo");
         addMessageToConversation(data);
       }
-
       sendMessage(data, body);
     } catch (error) {
       console.error(error);
@@ -84,26 +78,17 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-
-      // conversations.forEach((convo) => {
-      //   if (convo.otherUser.id === recipientId) {
-      //     convo.messages.push(message);
-      //     convo.latestMessageText = message.text;
-      //     convo.id = message.conversationId;
-      //   }
-      // });
-      // setConversations(conversations);
       let conversation_copy = conversations.map((convo) => {
         console.log(convo);
         if (convo.otherUser.id === recipientId) {
-          convo.messages= [message, ...convo.messages];
-          convo.latestMessageText=message.text;
-          convo.id = message.conversationId; 
-        } 
-      return convo;
-      });      
+          convo.messages = [message, ...convo.messages];
+          convo.latestMessageText = message.text;
+          convo.id = message.conversationId;
+        }
+        return convo;
+      });
       setConversations(conversation_copy);
-     
+
     },
     [setConversations, conversations]
   );
@@ -111,11 +96,9 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      console.log("here");
-      console.log("data in addmsg to conv :",data)
+
       const { message, sender = null } = data;
       if (sender !== null) {
-        console.log("in new conversation:msg,sender are:",message,sender)
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
@@ -124,17 +107,16 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
-      
+
       let conversation_copy = conversations.map((convo) => {
-        console.log(convo);
         if (convo.id === message.conversationId) {
-          convo.messages= [...convo.messages, message];
-          convo.latestMessageText=message.text;  
-        } 
-      return convo;
-      });      
+          convo.messages = [...convo.messages, message];
+          convo.latestMessageText = message.text;
+        }
+        return convo;
+      });
       setConversations(conversation_copy);
-     
+
     },
     [setConversations, conversations]
   );
@@ -142,7 +124,7 @@ const Home = ({ user, logout }) => {
   const setActiveChat = (username) => {
     setActiveConversation(username);
   };
- 
+
   const addOnlineUser = useCallback((id) => {
     setConversations((prev) =>
       prev.map((convo) => {
@@ -205,7 +187,7 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
-        console.log("incoming conversations",data);
+        console.log("incoming conversations", data);
         setConversations(data);
       } catch (error) {
         console.error(error);
