@@ -65,11 +65,13 @@ const Home = ({ user, logout }) => {
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);    
+
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
       } else {
         addMessageToConversation(data);
       }
+
       sendMessage(data, body);
     } catch (error) {
       console.error(error);
@@ -188,7 +190,6 @@ const Home = ({ user, logout }) => {
     const fetchConversations = async () => {
       try {
         const { data } = await axios.get('/api/conversations');
-        console.log("incoming conversations", data);
         setConversations(data);
       } catch (error) {
         console.error(error);

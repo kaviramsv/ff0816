@@ -25,7 +25,8 @@ const Sidebar = ({
   user,
   setActiveChat,
 }) => {
-  const classes = useStyles(); 
+  const classes = useStyles();
+
   return (
     <Box className={classes.root}>
       <CurrentUser user={user} />
