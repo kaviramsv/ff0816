@@ -81,11 +81,14 @@ const Home = ({ user, logout }) => {
       setConversations((prev)=>
         prev.map((convo) => {  
           if (convo.otherUser.id === recipientId) {
-            convo.messages = [message, ...convo.messages];
-            convo.latestMessageText = message.text;
-            convo.id = message.conversationId;
-          }
-          return convo;
+            const convoCopy = { ...convo };
+            convoCopy.messages = [...convo.messages, message];
+            convoCopy.latestMessageText = message.text;
+            convoCopy.id = message.conversationId;
+            return convoCopy; 
+          } else {
+            return convo;
+          }          
         })
       );
     },[setConversations, conversations]
@@ -107,10 +110,13 @@ const Home = ({ user, logout }) => {
       setConversations((prev)=>
         prev.map((convo) => {
           if (convo.id === message.conversationId) {
-            convo.messages = [...convo.messages, message];
-            convo.latestMessageText = message.text;
-          }
-          return convo;         
+            const convoCopy = { ...convo };
+            convoCopy.messages = [...convo.messages, message];
+            convoCopy.latestMessageText = message.text;
+            return convoCopy; 
+          } else {
+            return convo;
+          }                  
         })
       );  
       }, [setConversations, conversations]
