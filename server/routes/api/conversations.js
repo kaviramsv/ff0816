@@ -71,7 +71,7 @@ router.get("/", async (req, res, next) => {
       convoJSON.latestMessageText = convoJSON.messages[0].text;
       conversations[i] = convoJSON;
     }
-    console.log("right here",conversations["messages"]);
+
     res.json(conversations);
   } catch (error) {
     next(error);
