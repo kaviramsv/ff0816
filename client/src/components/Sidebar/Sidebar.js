@@ -36,11 +36,16 @@ const Sidebar = ({
         .filter((conversation) =>
           conversation.otherUser.username.includes(searchTerm)
         )
-        .sort((a,b)=>
-          Date.parse(new Date(a.messages[a.messages.length-1].createdAt))
-          >Date.parse(new Date(b.messages[b.messages.length-1].createdAt))?
-          -1:1  
-        )
+        .sort((a, b) => {
+          if (a && a.messages[a.messages.length - 1]) {
+            return (Date.parse(new Date(a.messages[a.messages.length - 1].createdAt))
+              > Date.parse(new Date(b.messages[b.messages.length - 1].createdAt)) ?
+              -1 : 1)
+          }
+          else {
+            return a;
+          }
+        })
         .map((conversation) => {
           return (
             <Chat
