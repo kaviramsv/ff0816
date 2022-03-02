@@ -64,14 +64,14 @@ const Home = ({ user, logout }) => {
     socket.emit('new-message', {
       message: data.message,
       recipientId: body.recipientId,
-      sender: data.sender,
+      sender: data.sender,      
     });
   };
 
   const postMessage = async (body) => {
     try {
       const data = await saveMessage(body);
-
+      console.log("data saved",data)
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
       } else {
@@ -106,6 +106,7 @@ const Home = ({ user, logout }) => {
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
       const { message, sender = null } = data;
+      console.log("data recieved from emit",data)
       if (sender !== null) {
         const newConvo = {
           id: message.conversationId,
