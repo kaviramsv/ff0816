@@ -39,6 +39,20 @@ router.post("/", async (req, res, next) => {
       hasRead: false,
     });
     res.json({ message, sender, hasRead});
+  } catch (error) { next(error);
+  }
+});
+router.put("/", async (req, res, next) => {
+  try {
+   
+    const { id } = req.body;
+    console.log("in put ",id )
+    const updatedMessage = await Message.update(
+      { hasRead: "true" },
+      { where: { conversationId: id } }     
+    );
+    console.log("update msg",updatedMessage)
+    res.json({ updatedMessage});
   } catch (error) {
     next(error);
   }
