@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -61,7 +61,7 @@ const Chat = ({ conversation, setActiveChat }) => {
 
     let body = findId(conversation.messages);
     console.log("con ids",body);
-    if(body.id){
+    if(body && body.id){
         let updated = await updateMessages(body);
         console.log("updated",updated);
     }
@@ -73,6 +73,11 @@ const Chat = ({ conversation, setActiveChat }) => {
       setCount(0);
     };
   }
+
+  useEffect(() => {
+    let totalUnread = totalUnreadCount(conversation.messages);    
+    setCount(totalUnread);
+  }, [conversation]);
     return (
       <Box onClick={() => handleClick(conversation)} className={classes.root}>
         <BadgeAvatar
