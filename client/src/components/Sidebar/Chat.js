@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Chat = ({ conversation, setActiveChat }) => {
+const Chat = ({ conversation, setActiveChat, activeConversation}) => {
   const classes = useStyles();
   const { otherUser } = conversation;
 
@@ -76,8 +76,19 @@ const Chat = ({ conversation, setActiveChat }) => {
 
   useEffect(() => {
     let totalUnread = totalUnreadCount(conversation.messages);    
-    setCount(totalUnread);
-  }, [conversation]);
+    
+    console.log("new",conversation);
+    console.log(conversation.otherUser.username === activeConversation);
+    if(activeConversation === conversation.otherUser.username ){
+      console.log("same");
+      setCount(0);//call put/api
+    }else{
+      setCount(totalUnread);
+    }
+    
+  }, [conversation, totalUnreadCount]);
+
+  console.log("active conversation", activeConversation);
     return (
       <Box onClick={() => handleClick(conversation)} className={classes.root}>
         <BadgeAvatar

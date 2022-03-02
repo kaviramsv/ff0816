@@ -24,6 +24,7 @@ const Sidebar = ({
   conversations = [],
   user,
   setActiveChat,
+  activeConversation,
 }) => {
   const classes = useStyles();
 
@@ -52,6 +53,7 @@ const Sidebar = ({
               conversation={conversation}
               key={conversation.otherUser.username}
               setActiveChat={setActiveChat}
+              activeConversation={activeConversation}
             />
           );
         })}
