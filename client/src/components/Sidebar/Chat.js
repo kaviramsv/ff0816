@@ -38,20 +38,19 @@ const Chat = ({ conversation, setActiveChat }) => {
   });
 
   //const updateMessage calling axios request in api messages in Home.js
-  const updateMessages = async (id) => {
-    console.log("in upd msgs", id)
-    
-    const { data } = await axios.put('/api/messages',{"id":id});
+  const updateMessages = async (body) => {
+    console.log("in upd msgs", body);    
+    const { data } = await axios.put('/api/messages',body);
     console.log("data updated", data);
     return data;
   };
 
-  const findId = (messages) => {
-    
+  const findId = (messages) => {    
     for (const msg of messages) {
       console.log(msg);
       if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
-        return msg.conversationId;
+        console.log(msg.conversationId);
+        return ({"id":msg.conversationId,"senderId":msg.senderId})
       }
     }
     
@@ -60,12 +59,12 @@ const Chat = ({ conversation, setActiveChat }) => {
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
 
-    let convId = findId(conversation.messages);
-    console.log("con ids",convId);
-    let updated = await updateMessages(2);
-
-    console.log("updated",updated);
-
+    let body = findId(conversation.messages);
+    console.log("con ids",body);
+    if(body.id){
+        let updated = await updateMessages(body);
+        console.log("updated",updated);
+    }
     for (const msg of conversation.messages) {
       if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
         msg.hasRead = "true";        
@@ -73,7 +72,6 @@ const Chat = ({ conversation, setActiveChat }) => {
       ;//postn emit
       setCount(0);
     };
-
   }
     return (
       <Box onClick={() => handleClick(conversation)} className={classes.root}>

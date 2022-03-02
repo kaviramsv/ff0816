@@ -45,11 +45,11 @@ router.post("/", async (req, res, next) => {
 router.put("/", async (req, res, next) => {
   try {
    
-    const { id } = req.body;
+    const { id, senderId } = req.body;
     console.log("in put ",id )
     const updatedMessage = await Message.update(
       { hasRead: "true" },
-      { where: { conversationId: id } }     
+      { where: { conversationId: id, senderId: senderId } }     
     );
     console.log("update msg",updatedMessage)
     res.json({ updatedMessage});
