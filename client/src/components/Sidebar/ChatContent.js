@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ChatContent = ({ conversation }) => {
+const ChatContent = ({ conversation, totalRead }) => {
   const classes = useStyles();
 
   const { otherUser } = conversation;
@@ -34,6 +34,9 @@ const ChatContent = ({ conversation }) => {
         </Typography>
         <Typography className={classes.previewText}>
           {latestMessageText}
+        </Typography>
+        <Typography className={classes.previewText}>
+          {totalRead}
         </Typography>
       </Box>
     </Box>

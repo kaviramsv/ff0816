@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
@@ -20,10 +20,32 @@ const useStyles = makeStyles((theme) => ({
 const Chat = ({ conversation, setActiveChat }) => {
   const classes = useStyles();
   const { otherUser } = conversation;
+  const [count, setCount] = useState(conversation.messages.length);
 
+  const totalReadCount = (messages) => {
+    let count = 0;
+    messages.forEach(msg => {
+      if (msg.hasRead === "false") {
+        count++ ;
+      }      
+    });
+    return count;
+  } 
+  const totalMessageCount = messages => messages.length ;
+
+  //const updateMessage calling axios request in api messages in Home.js
+  //
+  
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
+    console.log("conversation", conversation);
+    console.log("conversation.otherUser.username", conversation.otherUser.username);
+    let total = totalMessageCount(conversation.messages);  
+    let totalRead = totalReadCount(conversation.messages);
+    conversation.messages.forEach(msg=>{msg.hasRead="true"});//postn emit
+    setCount(prev=> prev-totalRead);
   };
+
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
@@ -33,7 +55,7 @@ const Chat = ({ conversation, setActiveChat }) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} />
+      <ChatContent conversation={conversation} totalRead={count}/>
     </Box>
   );
 };
