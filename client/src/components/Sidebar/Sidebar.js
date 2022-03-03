@@ -24,7 +24,7 @@ const Sidebar = ({
   conversations = [],
   user,
   setActiveChat,
-  activeConversation,
+  activeConversation
 }) => {
   const classes = useStyles();
 

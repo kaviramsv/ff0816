@@ -128,7 +128,6 @@ const Home = ({ user, logout }) => {
           }
         })
       );
-
     }, [setConversations, conversations]
   );
 

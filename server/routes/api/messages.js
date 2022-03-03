@@ -52,7 +52,7 @@ router.put("/", async (req, res, next) => {
       { where: { conversationId: id, senderId: senderId } }     
     );
     console.log("update msg",updatedMessage)
-    res.json({ updatedMessage});
+    res.json({ id});
   } catch (error) {
     next(error);
   }
