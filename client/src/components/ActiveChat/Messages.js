@@ -28,7 +28,7 @@ const Messages = (props) => {
     socket.on("stop", stopTyping);
     return () => {
       socket.off("typing-success", addTyping);
-      socket.on("stop", stopTyping);
+      socket.off("stop", stopTyping);
     };
   }, [addTyping, socket, stopTyping]);
   return (
