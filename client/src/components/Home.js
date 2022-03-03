@@ -46,7 +46,13 @@ const Home = ({ user, logout }) => {
   };
 
   const clearSearchedUsers = () => {
-    setConversations((prev) => prev.filter((convo) => convo.id));
+    setConversations((prev) => prev.filter((convo) => convo.id)
+      .sort((a, b) => {
+        return Date.parse(new Date(a.messages[a.messages.length - 1].createdAt))
+          > Date.parse(new Date(b.messages[b.messages.length - 1].createdAt)) ?
+          -1 : 1
+      })
+    );
   };
 
   const saveMessage = async (body) => {
@@ -62,9 +68,9 @@ const Home = ({ user, logout }) => {
     });
   };
 
-  const postMessage = (body) => {
+  const postMessage = async (body) => {
     try {
-      const data = saveMessage(body);
+      const data = await saveMessage(body);
 
       if (!body.conversationId) {
         addNewConvo(body.recipientId, data.message);
@@ -80,16 +86,20 @@ const Home = ({ user, logout }) => {
 
   const addNewConvo = useCallback(
     (recipientId, message) => {
-      conversations.forEach((convo) => {
-        if (convo.otherUser.id === recipientId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-          convo.id = message.conversationId;
-        }
-      });
-      setConversations(conversations);
-    },
-    [setConversations, conversations]
+      setConversations((prev) =>
+        prev.map((convo) => {
+          if (convo.otherUser.id === recipientId) {
+            const convoCopy = { ...convo };
+            convoCopy.messages = [...convo.messages, message];
+            convoCopy.latestMessageText = message.text;
+            convoCopy.id = message.conversationId;
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        })
+      );
+    }, [setConversations, conversations]
   );
 
   const addMessageToConversation = useCallback(
@@ -105,16 +115,20 @@ const Home = ({ user, logout }) => {
         newConvo.latestMessageText = message.text;
         setConversations((prev) => [newConvo, ...prev]);
       }
+      setConversations((prev) =>
+        prev.map((convo) => {
+          if (convo.id === message.conversationId) {
+            const convoCopy = { ...convo };
+            convoCopy.messages = [...convo.messages, message];
+            convoCopy.latestMessageText = message.text;
+            return convoCopy;
+          } else {
+            return convo;
+          }
+        })
+      );
 
-      conversations.forEach((convo) => {
-        if (convo.id === message.conversationId) {
-          convo.messages.push(message);
-          convo.latestMessageText = message.text;
-        }
-      });
-      setConversations(conversations);
-    },
-    [setConversations, conversations]
+    }, [setConversations, conversations]
   );
 
   const setActiveChat = (username) => {
