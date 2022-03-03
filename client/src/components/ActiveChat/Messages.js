@@ -6,18 +6,22 @@ import { SocketContext } from '../../context/socket';
 
 
 const Messages = (props) => {
-  const { messages, otherUser, userId } = props;
+  const { messages, otherUser, userId , activeConversation} = props;
   const [typing, setTyping] = useState(null);
   const socket = useContext(SocketContext);
+  console.log("act", activeConversation);
   const addTyping = useCallback((data) => {
-    console.log(messages,"message",otherUser, userId);
-    if(data.recipientId===userId && data.senderId===otherUser.id){
+    console.log("ACT INSIE CALL BACK",activeConversation,data.activeConversation );
+    if(data.recipientId===userId && data.senderId===otherUser.id && data.activeConversation===activeConversation){
     setTyping("Typing");
     }
-  }, []);
+  }, [activeConversation]);
   const stopTyping = useCallback((data) => {
+    if(data.recipientId===userId && data.senderId===otherUser.id && data.activeConversation===activeConversation){
     setTyping("stopped");
-  }, []);
+    }
+
+  }, [activeConversation]);
   useEffect(() => {
     // Socket init
     socket.on("typing-success", addTyping);

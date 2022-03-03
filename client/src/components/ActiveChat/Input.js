@@ -17,17 +17,18 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Input = ({ otherUser, conversationId, user, postMessage }) => {
+const Input = ({ otherUser, conversationId, user, postMessage, activeConversation }) => {
   const classes = useStyles();
   const [text, setText] = useState('');
   const socket = useContext(SocketContext);
   
   const sendTyping = () => {
-    console.log("in send typing Input",conversationId,otherUser.id,user.id);
+    console.log("in send typing Input",conversationId,otherUser.id,user.id,activeConversation);
     socket.emit("typing", {
       conversationId: conversationId,
       recipientId: otherUser.id,
       senderId: user.id,  
+      activeConversation: user.username,
     });
   }
   const sendStoppedTyping = () => {
@@ -35,7 +36,8 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
     socket.emit("stop", {
       conversationId: conversationId,
       recipientId: otherUser.id,
-      senderId: user.id,  
+      senderId: user.id, 
+      activeConversation: user.username, 
     });
   }
   const handleChange = (event) => {

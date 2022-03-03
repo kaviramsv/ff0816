@@ -52,12 +52,14 @@ const ActiveChat = ({
                   messages={conversation.messages}
                   otherUser={conversation.otherUser}
                   userId={user.id}
+                  activeConversation={activeConversation}
                 />
                 <Input
                   otherUser={conversation.otherUser}
                   conversationId={conversation.id || null}
                   user={user}
                   postMessage={postMessage}
+                  activeConversation={activeConversation}                  
                 />
               </>
             )}
