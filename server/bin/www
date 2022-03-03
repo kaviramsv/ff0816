@@ -46,6 +46,23 @@ io.on("connection", (socket) => {
       sender: data.sender,
     });
   });
+  socket.on("typing", (data) => {
+    console.log("in server typing",data);
+    socket.broadcast.emit("typing-success", {
+      conversationId: data.conversationId,
+      recipientId: data.recipientId,
+      senderId: data.senderId,        
+    });
+  });
+  socket.on("stop", (data) => {
+    console.log("in server  stop typing",data);
+    socket.broadcast.emit("stop", {
+      conversationId: data.conversationId,
+      recipientId: data.recipientId,
+      senderId: data.senderId,        
+    });
+  });
+
 
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {
