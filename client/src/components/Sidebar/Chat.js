@@ -79,13 +79,26 @@ const Chat = ({ conversation, setActiveChat, activeConversation}) => {
     
     console.log("new",conversation);
     console.log(conversation.otherUser.username === activeConversation);
+    const fetchData = async (body) => {
+      const data = await updateMessages(body);
+      return data;
+   }
+     const update = async () =>{
     if(activeConversation === conversation.otherUser.username ){
       console.log("same");
+      let body = findId(conversation.messages);
+        console.log("body in useeffect",body);
+        if(body && body.id){
+          let updated =await fetchData(body);
+          console.log("updated inside if",updated);
+        }
       setCount(0);//call put/api
     }else{
       setCount(totalUnread);
     }
-    
+  }
+  update();
+
   }, [conversation, totalUnreadCount]);
 
   console.log("active conversation", activeConversation);
