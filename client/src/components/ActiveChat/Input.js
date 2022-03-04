@@ -68,20 +68,7 @@ const Input = ({ otherUser, conversationId, user, postMessage, activeConversatio
     await postMessage(reqBody);
     setText('');
   };
- 
 
-  // const addTyping = useCallback((data) => {
-  //   console.log("data tying ",data);
-  
-  // }, []);
-  // useEffect(() => {
-  //   // Socket init
-  //   socket.on("typing-success", addTyping);   
-
-  //   return () => {    
-  //     socket.off("typing-success", addTyping);      
-  //   };
-  // }, [addTyping, socket]);
   return (
     <form className={classes.root} onSubmit={handleSubmit}>
       <FormControl fullWidth hiddenLabel>

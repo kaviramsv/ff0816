@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { Grid, CssBaseline, Button } from '@material-ui/core';
+import { Grid, CssBaseline, Button, useRadioGroup } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { SidebarContainer } from '../components/Sidebar';
@@ -105,9 +105,9 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null } = data;
+      const { message, sender = null ,recipientId} = data;
       console.log("data",data);
-      if (sender !== null) {
+      if (sender !== null && recipientId === user.id ) {
         console.log("data1");
         const newConvo = {
           id: message.conversationId,
@@ -118,10 +118,11 @@ const Home = ({ user, logout }) => {
         console.log("2",conversations.length);
         setConversations((prev) => [newConvo, ...prev]);
       }
-      console.log("3",conversations.length);
+      console.log("3",conversations);
       setConversations((prev) =>
         prev.map((convo) => {
-          if (convo.id === message.conversationId) {
+          if (convo.id === message.conversationId ) {
+
             const convoCopy = { ...convo };
             convoCopy.messages = [...convo.messages, message];
             convoCopy.latestMessageText = message.text;
