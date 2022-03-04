@@ -26,16 +26,19 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 12,
     color: "#9CADC8",
     letterSpacing: -0.17,
+    
   },
   readBubble: {
     height: 25,
     background: '#3F92FF',
     borderRadius: 25,    
-    width:25,
+    minWidth:25,
     color: 'white',
     fontSize: "14px",
-    textAlign: "center",    
-    fontWeight: 700,    
+    verticalAlign: "center",    
+    fontWeight: 700,
+    padding:8,
+    lineHeight:.8,    
   }
 
 }));
