@@ -34,11 +34,11 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 25,    
     minWidth:25,
     color: 'white',
+    lineHeight:.6,
     fontSize: "14px",
     verticalAlign: "center",    
     fontWeight: 700,
-    padding:8,
-    lineHeight:.8,    
+    padding:10,        
   }
 
 }));

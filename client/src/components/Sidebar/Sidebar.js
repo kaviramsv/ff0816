@@ -39,6 +39,7 @@ const Sidebar = ({
         )
         .sort((a, b) => {
           if (a && a.messages[a.messages.length - 1]) {
+            console.log(a.messages);
             return (Date.parse(new Date(a.messages[a.messages.length - 1].createdAt))
               > Date.parse(new Date(b.messages[b.messages.length - 1].createdAt)) ?
               -1 : 1)
