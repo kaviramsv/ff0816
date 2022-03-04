@@ -8,10 +8,8 @@ import { SocketContext } from '../../context/socket';
 const Messages = (props) => {
   const { messages, otherUser, userId , activeConversation} = props;
   const [typing, setTyping] = useState(null);
-  const socket = useContext(SocketContext);
-  console.log("act", activeConversation);
-  const addTyping = useCallback((data) => {
-    console.log("ACT INSIE CALL BACK",activeConversation,data.activeConversation );
+  const socket = useContext(SocketContext);  
+  const addTyping = useCallback((data) => {    
     if(data.recipientId===userId && data.senderId===otherUser.id && data.activeConversation===activeConversation){
     setTyping("Typing");
     }
@@ -20,7 +18,6 @@ const Messages = (props) => {
     if(data.recipientId===userId && data.senderId===otherUser.id && data.activeConversation===activeConversation){
     setTyping("stopped");
     }
-
   }, [activeConversation]);
   useEffect(() => {
     // Socket init

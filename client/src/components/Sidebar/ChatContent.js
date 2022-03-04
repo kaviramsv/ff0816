@@ -7,8 +7,17 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "space-between",
     marginLeft: 20,
-    flexGrow: 1,
+    flexGrow: 1, 
   },
+  division: {   
+    display: "flex",
+    direction: "column",
+    flexGrow: 1, 
+    justifyContent: "space-between",
+    lineHeight:2,
+    padding: 12,
+  },
+  
   username: {
     fontWeight: "bold",
     letterSpacing: -0.2,
@@ -18,9 +27,20 @@ const useStyles = makeStyles((theme) => ({
     color: "#9CADC8",
     letterSpacing: -0.17,
   },
+  readBubble: {
+    height: 25,
+    background: '#3F92FF',
+    borderRadius: 25,    
+    width:25,
+    color: 'white',
+    fontSize: "14px",
+    textAlign: "center",    
+    fontWeight: 700,    
+  }
+
 }));
 
-const ChatContent = ({ conversation, totalRead ,activeConversation, user}) => {
+const ChatContent = ({ conversation, totalRead, activeConversation, user }) => {
   const classes = useStyles();
 
   const { otherUser } = conversation;
@@ -30,13 +50,13 @@ const ChatContent = ({ conversation, totalRead ,activeConversation, user}) => {
   const socket = useContext(SocketContext);
 
   const addTyping = useCallback((data) => {    // 
-    if(data.recipientId===user.id && data.senderId===otherUser.id ){
-    setTyping("Typing");
+    if (data.recipientId === user.id && data.senderId === otherUser.id) {
+      setTyping("Typing");
     }
   }, [activeConversation]);
   const stopTyping = useCallback((data) => {
-    if(data.recipientId===user.id && data.senderId===otherUser.id ){
-    setTyping("stopped");
+    if (data.recipientId === user.id && data.senderId === otherUser.id) {
+      setTyping("stopped");
     }
 
   }, [activeConversation]);
@@ -52,17 +72,21 @@ const ChatContent = ({ conversation, totalRead ,activeConversation, user}) => {
 
   return (
     <Box className={classes.root}>
-      <Box>
-        <Typography className={classes.username}>
-          {otherUser.username}
-        </Typography>
-        
-        <Typography className={classes.previewText}>
-          {typing==="Typing"? "Typing...":latestMessageText}
-        </Typography>
-        <Typography className={classes.previewText}>
-          {totalRead}
-        </Typography>
+      <Box className={classes.division}>
+        <Box className={classes.info}>
+          <Typography className={classes.username}>
+            {otherUser.username}
+          </Typography>
+          <Typography className={classes.previewText}>
+            {typing === "Typing" ? <i>Typing....</i>: latestMessageText}
+          </Typography>
+        </Box>
+        <Box className={classes.count}>
+          {totalRead>0 &&
+          <Typography className={classes.readBubble}>
+            {totalRead }
+          </Typography>}
+        </Box>
       </Box>
     </Box>
   );
