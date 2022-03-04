@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Box } from '@material-ui/core';
-import { SenderBubble, OtherUserBubble } from '.';
+import { SenderBubble, OtherUserBubble} from '.';
+import TypingBubble from './TypingBubble';
 import moment from 'moment';
 import { SocketContext } from '../../context/socket';
 
@@ -43,9 +44,9 @@ const Messages = (props) => {
           />
         );
       })}
-      {(typing === "Typing") ? <OtherUserBubble otherUser={otherUser} time={""} text={typing} /> : null}
+      {(typing === "Typing") ? <TypingBubble otherUser={otherUser} text="⚪ ⚪ ⚪" /> : null}
     </Box>
   );
-};
+}; 
 
 export default Messages;
