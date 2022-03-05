@@ -105,34 +105,30 @@ const Home = ({ user, logout }) => {
   const addMessageToConversation = useCallback(
     (data) => {
       // if sender isn't null, that means the message needs to be put in a brand new convo
-      const { message, sender = null ,recipientId} = data;
-      console.log("data",data);
-      if (sender !== null && recipientId === user.id ) {
-        console.log("data1");
+      const { message, sender = null, recipientId } = data;      
+      if (sender !== null && recipientId === user.id) {
         const newConvo = {
           id: message.conversationId,
           otherUser: sender,
           messages: [message],
         };
-        newConvo.latestMessageText = message.text;
-        console.log("2",conversations.length);
+        newConvo.latestMessageText = message.text;        
         setConversations((prev) => [newConvo, ...prev]);
       }
-      console.log("3",conversations);
-      setConversations((prev) =>
-        prev.map((convo) => {
-          if (convo.id === message.conversationId ) {
-
-            const convoCopy = { ...convo };
-            convoCopy.messages = [...convo.messages, message];
-            convoCopy.latestMessageText = message.text;
-            return convoCopy;
-          } else {
-            return convo;
-          }
-        })
-      );
-
+      else {
+        setConversations((prev) =>
+          prev.map((convo) => {
+            if (convo.id === message.conversationId) {
+              const convoCopy = { ...convo };
+              convoCopy.messages = [...convo.messages, message];
+              convoCopy.latestMessageText = message.text;
+              return convoCopy;
+            } else {
+              return convo;
+            }
+          })
+        );
+      }
     }, [setConversations, conversations]
   );
 

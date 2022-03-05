@@ -18,38 +18,36 @@ const useStyles = makeStyles(() => ({
 }));
 
 const Input = ({ otherUser, conversationId, user, postMessage, activeConversation }) => {
+  const socket = useContext(SocketContext);
   const classes = useStyles();
   const [text, setText] = useState('');
-  const socket = useContext(SocketContext);
-  
+
   const sendTyping = () => {
-    console.log("in send typing Input",conversationId,otherUser.id,user.id,activeConversation);
     socket.emit("typing", {
       conversationId: conversationId,
       recipientId: otherUser.id,
-      senderId: user.id,  
+      senderId: user.id,
       activeConversation: user.username,
     });
   }
   const sendStoppedTyping = () => {
-    console.log("in send stop typing Input",conversationId,otherUser.id,user.id);
     socket.emit("stop", {
       conversationId: conversationId,
       recipientId: otherUser.id,
-      senderId: user.id, 
-      activeConversation: user.username, 
+      senderId: user.id,
+      activeConversation: user.username,
     });
   }
   const handleChange = (event) => {
-    setText(event.target.value);    
-    if (event.target.value==="") {      
+    setText(event.target.value);
+    if (event.target.value === "") {
       sendStoppedTyping();
-    }else{
+    } else {
       sendTyping();
     }
   };
   const handleKeyPress = (event) => {
-    if(event.key === 'Enter'){      
+    if (event.key === 'Enter') {
       sendStoppedTyping();
     }
   }

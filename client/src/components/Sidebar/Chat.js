@@ -26,42 +26,33 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
     let count = 0;
     messages.forEach(msg => {
       if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
-        console.log("msg", msg)
         count++;
       }
     });
     return count;
-  }, []
-  );
+  }, [otherUser.id] );
   const [count, setCount] = useState(() => {
     let totalUnread = totalUnreadCount(conversation.messages);
     return totalUnread;
   });
 
   //const updateMessage calling axios request in api messages in Home.js
-  const updateMessages = async (body) => {
-    console.log("in upd msgs", body);
-    const { data } = await axios.put('/api/messages', body);
-    console.log("data updated", data);
+  const updateMessages = async (body) => {    
+    const { data } = await axios.put('/api/messages', body);    
     return data;
   };
 
   const findId = useCallback((messages) => {
-    for (const msg of messages) {
-      console.log(msg);
-      if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
-        console.log(msg.conversationId);
+    for (const msg of messages) {      
+      if (msg.hasRead === "false" && msg.senderId === otherUser.id) {        
         return ({ "id": msg.conversationId, "senderId": msg.senderId })
       }
     }
-
-  })
+  },[otherUser.id])
 
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
-
-    let body = findId(conversation.messages);
-    console.log("con ids", body);
+    let body = findId(conversation.messages);    
     if (body && body.id) {
       let updated = await updateMessages(body);
       console.log("updated", updated);
@@ -76,16 +67,16 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
   }
 
   useEffect(() => {
-    let totalUnread = totalUnreadCount(conversation.messages);   
+    let totalUnread = totalUnreadCount(conversation.messages);
     const fetchData = async (body) => {
       const data = await updateMessages(body);
       return data;
     }
     const update = async () => {
-      if (activeConversation === conversation.otherUser.username) {        
-        let body = findId(conversation.messages);        
+      if (activeConversation === conversation.otherUser.username) {
+        let body = findId(conversation.messages);
         if (body && body.id) {
-          await fetchData(body);          
+          await fetchData(body);
           for (const msg of conversation.messages) {
             if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
               msg.hasRead = "true";
@@ -93,15 +84,14 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
             ;//postn emit
             setCount(0);
           };
-        
         }
       } else {
         setCount(totalUnread);
       }
     }
     update();
-  }, [activeConversation, conversation, findId, totalUnreadCount]);
-  
+  }, [activeConversation, conversation, findId, otherUser.id, totalUnreadCount]);
+
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
       <BadgeAvatar
@@ -110,7 +100,7 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
         online={otherUser.online}
         sidebar={true}
       />
-      <ChatContent conversation={conversation} totalRead={count} activeConversation={activeConversation} user={user}/>
+      <ChatContent conversation={conversation} totalRead={count} activeConversation={activeConversation} user={user} />
     </Box>
   );
 };

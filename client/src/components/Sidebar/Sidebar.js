@@ -38,8 +38,7 @@ const Sidebar = ({
           conversation.otherUser.username.includes(searchTerm)
         )
         .sort((a, b) => {
-          if (a && a.messages[a.messages.length - 1]) {
-            console.log(a.messages);
+          if (a && a.messages[a.messages.length - 1]&& b.messages && b.messages[b.messages.length - 1]) {
             return (Date.parse(new Date(a.messages[a.messages.length - 1].createdAt))
               > Date.parse(new Date(b.messages[b.messages.length - 1].createdAt)) ?
               -1 : 1)
