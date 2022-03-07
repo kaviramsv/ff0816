@@ -63,6 +63,11 @@ io.on("connection", (socket) => {
       activeConversation: data.activeConversation,        
     });
   });
+  socket.on("delivered", (data) => {     
+    socket.broadcast.emit("delivered-success", {
+      msgId: data.msgId,
+    });
+  });
   socket.on("logout", (id) => {
     if (onlineUsers.includes(id)) {
       userIndex = onlineUsers.indexOf(id);

@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Box } from '@material-ui/core';
 import { BadgeAvatar, ChatContent } from '../Sidebar';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
+import { SocketContext } from '../../context/socket';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -21,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
 const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
   const classes = useStyles();
   const { otherUser } = conversation;
+  const socket = useContext(SocketContext);
 
   const totalUnreadCount = useCallback((messages) => {
     let count = 0;
@@ -30,42 +32,45 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
       }
     });
     return count;
-  }, [otherUser.id] );
+  }, [otherUser.id]);
   const [count, setCount] = useState(() => {
     let totalUnread = totalUnreadCount(conversation.messages);
     return totalUnread;
   });
-
+  const sendDelivered = (msgId) => {
+    socket.emit("delivered", {
+      msgId: msgId,
+    });
+  }
   //const updateMessage calling axios request in api messages in Home.js
-  const updateMessages = async (body) => {    
-    const { data } = await axios.put('/api/messages', body);    
+  const updateMessages = async (body) => {
+    const { data } = await axios.put('/api/messages', body);
     return data;
   };
 
   const findId = useCallback((messages) => {
-    for (const msg of messages) {      
-      if (msg.hasRead === "false" && msg.senderId === otherUser.id) {        
+    for (const msg of messages) {
+      if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
         return ({ "id": msg.conversationId, "senderId": msg.senderId })
       }
     }
-  },[otherUser.id])
+  }, [otherUser.id])
 
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
-    let body = findId(conversation.messages);    
+    let body = findId(conversation.messages);
     if (body && body.id) {
-      let updated = await updateMessages(body);
-      console.log("updated", updated);
-    }
+      let data = await updateMessages(body);
+      sendDelivered(data.latestUpdated);
+    };
+
     for (const msg of conversation.messages) {
       if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
         msg.hasRead = "true";
-      }
-      ;//postn emit
+      };
       setCount(0);
     };
   }
-
   useEffect(() => {
     let totalUnread = totalUnreadCount(conversation.messages);
     const fetchData = async (body) => {
@@ -76,7 +81,8 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
       if (activeConversation === conversation.otherUser.username) {
         let body = findId(conversation.messages);
         if (body && body.id) {
-          await fetchData(body);
+          let data = await fetchData(body);          
+          sendDelivered(data.latestUpdated);
           for (const msg of conversation.messages) {
             if (msg.hasRead === "false" && msg.senderId === otherUser.id) {
               msg.hasRead = "true";
