@@ -49,6 +49,17 @@ router.put("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const { id, senderId } = req.body;
+    const conversationUser = await Conversation.findAll({
+      where: { id: id },
+      raw: true,
+    })    
+    const owners = [];
+    owners.push(conversationUser[0].user1Id);
+    owners.push(conversationUser[0].user2Id);
+
+    if  (!owners.includes(req.user.id)){
+      return res.sendStatus(403);
+    }
     const updatedMessage = await Message.update(
       { hasRead: "true" },
       { where: { conversationId: id, senderId: senderId } } ,
