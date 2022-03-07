@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Avatar, Box, Typography } from "@material-ui/core";
+import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { SocketContext } from '../../context/socket';
 const useStyles = makeStyles((theme) => ({

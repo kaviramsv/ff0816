@@ -37,11 +37,11 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
     let totalUnread = totalUnreadCount(conversation.messages);
     return totalUnread;
   });
-  const sendDelivered = (msgId) => {
+  const sendDelivered = useCallback((msgId) => {
     socket.emit("delivered", {
       msgId: msgId,
     });
-  }
+  })
   //const updateMessage calling axios request in api messages in Home.js
   const updateMessages = async (body) => {
     const { data } = await axios.put('/api/messages', body);
@@ -58,9 +58,9 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
 
   const handleClick = async (conversation) => {
     await setActiveChat(conversation.otherUser.username);
-    let body = findId(conversation.messages);
+    const body = findId(conversation.messages);
     if (body && body.id) {
-      let data = await updateMessages(body);
+      const data = await updateMessages(body);
       sendDelivered(data.latestUpdated);
     };
 
@@ -96,7 +96,7 @@ const Chat = ({ conversation, setActiveChat, activeConversation, user }) => {
       }
     }
     update();
-  }, [activeConversation, conversation, findId, otherUser.id, totalUnreadCount]);
+  }, [activeConversation, conversation, findId, otherUser.id, sendDelivered, totalUnreadCount]);
 
   return (
     <Box onClick={() => handleClick(conversation)} className={classes.root}>
