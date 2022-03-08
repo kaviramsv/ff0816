@@ -15,6 +15,9 @@ Conversation.belongsTo(User, { as: "user2" ,foreignKey: {
 Conversation.belongsTo(Group, { as: "group" ,foreignKey: {
   allowNull: true,
 } });
+Group.belongsTo(User, { as: "owner" ,foreignKey: {
+  allowNull: false,
+} });
 Message.belongsTo(Conversation);
 Conversation.hasMany(Message);
 User.belongsToMany(Group,{through:"user_group",as:"group",foreignKey: "user_id"});
