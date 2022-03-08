@@ -5,6 +5,10 @@ const Group = db.define("group", {
   name: {
     type: Sequelize.STRING,
     allowNull: false,
+  }, 
+  owner: {
+    type: Sequelize.STRING,
+    allowNull: false,
   }  
 });
 
