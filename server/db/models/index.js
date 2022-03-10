@@ -2,7 +2,7 @@ const Conversation = require("./conversation");
 const User = require("./user");
 const Message = require("./message");
 const Group = require("./group");
-const MessageStatus = require("./messageStatusgroup");
+const MessageStatus = require("./messageStatus");
 //User group associations
 
 User.belongsToMany(Group,{through:"user_group",as:"group",foreignKey: "user_id"});
