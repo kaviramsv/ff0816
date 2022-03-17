@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { FormControl, FilledInput } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { SocketContext } from '../../context/socket';
+import UserAvatar from '../Sidebar/BadgeAvatar';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -15,14 +17,40 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const Input = ({ otherUser, conversationId, user, postMessage }) => {
+const Input = ({ otherUser, conversationId, user, postMessage, activeConversation }) => {
+  const socket = useContext(SocketContext);
   const classes = useStyles();
   const [text, setText] = useState('');
 
+  const sendTyping = () => {
+    socket.emit("typing", {
+      conversationId: conversationId,
+      recipientId: otherUser.id,
+      senderId: user.id,
+      activeConversation: user.username,
+    });
+  }
+  const sendStoppedTyping = () => {
+    socket.emit("stop", {
+      conversationId: conversationId,
+      recipientId: otherUser.id,
+      senderId: user.id,
+      activeConversation: user.username,
+    });
+  }
   const handleChange = (event) => {
     setText(event.target.value);
+    if (event.target.value === "") {
+      sendStoppedTyping();
+    } else {
+      sendTyping();
+    }
   };
-
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      sendStoppedTyping();
+    }
+  }
   const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -33,6 +61,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
       recipientId: otherUser.id,
       conversationId,
       sender: conversationId ? null : user,
+      hasRead: "false",
     };
     await postMessage(reqBody);
     setText('');
@@ -47,6 +76,7 @@ const Input = ({ otherUser, conversationId, user, postMessage }) => {
           placeholder="Type something..."
           value={text}
           name="text"
+          onKeyPress={handleKeyPress}
           onChange={handleChange}
         />
       </FormControl>

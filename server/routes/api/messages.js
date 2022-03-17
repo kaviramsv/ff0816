@@ -9,12 +9,12 @@ router.post("/", async (req, res, next) => {
       return res.sendStatus(401);
     }
     const senderId = req.user.id;
-    const { recipientId, text, conversationId, sender } = req.body;
+    const { recipientId, text, conversationId, sender, hasRead } = req.body;
 
     // if we already know conversation id, we can save time and just add it to message and return
     if (conversationId) {
-      const message = await Message.create({ senderId, text, conversationId });
-      return res.json({ message, sender });
+      const message = await Message.create({ senderId, text, conversationId, hasRead });
+      return res.json({ message, sender, hasRead });
     }
     // if we don't have conversation id, find a conversation to make sure it doesn't already exist
     let conversation = await Conversation.findConversation(
@@ -36,8 +36,40 @@ router.post("/", async (req, res, next) => {
       senderId,
       text,
       conversationId: conversation.id,
+      hasRead: false,
     });
-    res.json({ message, sender });
+    res.json({ message, sender, hasRead });
+  } catch (error) {
+    next(error);
+  }
+});
+router.put("/", async (req, res, next) => {
+  try {
+    if (!req.user) {
+      return res.sendStatus(401);
+    }
+    const { id, senderId } = req.body;
+    const conversationUser = await Conversation.findAll({
+      where: { id: id },
+      raw: true,
+    })    
+    const owners = [];
+    owners.push(conversationUser[0].user1Id);
+    owners.push(conversationUser[0].user2Id);
+
+    if  (!owners.includes(req.user.id)){
+      return res.sendStatus(403);
+    }
+    const updatedMessage = await Message.update(
+      { hasRead: "true" },
+      { where: { conversationId: id, senderId: senderId } } ,
+    );
+
+    const latestUpdated = await Message.max(
+      'id', {
+      where: { conversationId: id, senderId: senderId }
+    });
+    res.json({ id, latestUpdated });
   } catch (error) {
     next(error);
   }

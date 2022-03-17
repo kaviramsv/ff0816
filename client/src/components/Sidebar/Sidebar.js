@@ -24,6 +24,7 @@ const Sidebar = ({
   conversations = [],
   user,
   setActiveChat,
+  activeConversation
 }) => {
   const classes = useStyles();
 
@@ -37,7 +38,7 @@ const Sidebar = ({
           conversation.otherUser.username.includes(searchTerm)
         )
         .sort((a, b) => {
-          if (a && a.messages[a.messages.length - 1]) {
+          if (a && a.messages[a.messages.length - 1]&& b.messages && b.messages[b.messages.length - 1]) {
             return (Date.parse(new Date(a.messages[a.messages.length - 1].createdAt))
               > Date.parse(new Date(b.messages[b.messages.length - 1].createdAt)) ?
               -1 : 1)
@@ -52,6 +53,8 @@ const Sidebar = ({
               conversation={conversation}
               key={conversation.otherUser.username}
               setActiveChat={setActiveChat}
+              activeConversation={activeConversation}
+              user={user}
             />
           );
         })}
